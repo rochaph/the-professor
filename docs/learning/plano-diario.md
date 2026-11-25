@@ -22,7 +22,8 @@ Uma missão por dia, de ~60 minutos, com começo, meio e fim. A rotina das 15h l
 | M02 · Spring Boot do zero | 1 | concluída |
 | M03 · Postgres, JPA e Flyway | 1 | concluída |
 | M04 · CRUD de agendamento em camadas | 1 | concluída |
-| M05 · Testes no Spring | 1 | pendente |
+| M05 · Testes no Spring | 1 | concluída |
+| M05b · Migrar o domínio para o coach de CS2 | 1 | pendente |
 | M06 · Regras de negócio e a dor | 1 | pendente |
 | M07 · Domínio puro | 1 | pendente |
 | M08 · Ports e caso de uso | 1 | pendente |
@@ -94,12 +95,26 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 - **Por quê:** ter rede de segurança antes de refatorar.
 - **Primeiro passo (5 min):** listar os cenários (agendar com sucesso, payload inválido, id inexistente).
 - **Pronto quando:**
-  - [ ] Teste unitário do service com Mockito
-  - [ ] Teste do controller com `@WebMvcTest`
-  - [ ] Teste de integração com Testcontainers (`@ServiceConnection`) contra Postgres real
-  - [ ] `./mvnw verify` verde
+  - [x] Teste unitário do service com Mockito
+  - [x] Teste do controller com `@WebMvcTest`
+  - [x] Teste de integração com Testcontainers (`@ServiceConnection`) contra Postgres real
+  - [x] `./mvnw verify` verde
 - **Conceito de entrevista:** pirâmide de testes, slices do Spring, por que não H2.
 - **Versão mínima:** um `@WebMvcTest` passando.
+
+### M05b · Migrar o domínio para o coach de CS2
+
+- **Por quê:** trabalhar num sistema que você usaria de verdade, e praticar refatoração com a rede de testes da M05.
+- **Primeiro passo (5 min):** fechar o nome do projeto e dos serviços
+  (proposta: `appointments` → `reviews`, `pets` → `teams`, `inventory` → `quota`).
+- **Pronto quando:**
+  - [ ] README, CLAUDE.md, este plano (M06 em diante) e nomes nos ADRs ajustados (o Claude faz)
+  - [ ] Código renomeado: `petId` → `teamId`, `veterinarianId` → `matchId`, `scheduledAt` → `playedAt`
+  - [ ] `V2` do Flyway renomeando o banco, sem editar a `V1`
+  - [ ] `@Future` → `@PastOrPresent`, e os testes da M05 adaptados e verdes
+- **Conceito de entrevista:** refatorar com rede de testes; migration imutável; renomear coluna sem parar o serviço
+  (expand/contract).
+- **Versão mínima:** nomes fechados e docs ajustadas.
 
 ### M06 · Regras de negócio e a dor
 

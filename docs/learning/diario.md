@@ -12,9 +12,9 @@ Resultado: ✅ acertou · ⚠️ parcial · ❌ errou · — ainda não pergunta
 
 | # | Pergunta | Origem | Última revisão | Resultado |
 |---|---|---|---|---|
-| 1 | Por que Maven e não Gradle neste projeto? | 2026-10-14 | 2026-10-27 | ✅ |
-| 2 | Para que serve o Maven Wrapper? | 2026-10-14 | 2026-10-27 | ✅ |
-| 3 | Que problema a arquitetura em camadas tradicional causa no domínio? | 2026-10-15 | 2026-10-28 | ✅ |
+| 1 | Por que Maven e não Gradle neste projeto? | 2026-10-14 | 2026-11-14 | ✅ |
+| 2 | Para que serve o Maven Wrapper? | 2026-10-14 | 2026-11-14 | ✅ |
+| 3 | Que problema a arquitetura em camadas tradicional causa no domínio? | 2026-10-15 | 2026-11-14 | ✅ |
 | 4 | O que é um port de entrada? E um de saída? | 2026-10-15 | 2026-11-07 | ✅ |
 | 5 | Por que o port de saída é declarado no centro, e não no adapter? | 2026-10-15 | 2026-10-28 | ✅ |
 | 6 | Qual princípio do SOLID sustenta a Arquitetura Hexagonal? | 2026-10-15 | 2026-10-28 | ✅ |
@@ -47,9 +47,15 @@ Resultado: ✅ acertou · ⚠️ parcial · ❌ errou · — ainda não pergunta
 | 33 | Anotações de validação no DTO, mas o request inválido passa: qual a causa provável? | 2026-11-10 | 2026-11-11 | ✅ |
 | 34 | Por que o JPA exige um construtor sem argumentos na entidade? | 2026-11-10 | 2026-11-10 | ✅ |
 | 35 | O que o Problem Details (RFC 9457) padroniza? | 2026-11-11 | 2026-11-11 | ✅ |
-| 36 | `"petId": "abc"` num POST: que etapa recusa o request? | 2026-11-11 | 2026-11-11 | ❌ |
+| 36 | `"petId": "abc"` num POST: que etapa recusa o request? | 2026-11-11 | 2026-11-14 | ✅ |
 | 37 | Exceção inesperada no handler global: o que a API deve devolver? | 2026-11-11 | 2026-11-11 | ✅ |
 | 38 | Por que o service lança exceção própria, e não `ResponseStatusException`? | 2026-11-11 | 2026-11-11 | ✅ |
+| 39 | O que o `@WebMvcTest` carrega? | 2026-11-25 | 2026-11-25 | ✅ |
+| 40 | Por que testar contra Postgres real, e não H2? | 2026-11-25 | 2026-11-25 | ✅ |
+| 41 | O que o `@ServiceConnection` faz no container de teste? | 2026-11-25 | 2026-11-25 | ✅ |
+| 42 | Pela pirâmide de testes, onde fica a maior parte dos testes de regra de negócio? | 2026-11-25 | 2026-11-25 | ✅ |
+| 43 | Por que um `Instant` gravado em `timestamptz` pode voltar diferente do enviado? | 2026-11-25 | — | — |
+| 44 | Por que o `@TestConfiguration` precisa de `@Import` em cada classe de teste? | 2026-11-25 | — | — |
 
 ## Registro
 
@@ -63,6 +69,17 @@ Uma entrada por sessão, da mais recente para a mais antiga.
 - **Quiz do dia:** acertos / total; perguntas novas entram no banco de revisão
 - **Ponto fraco:** o que precisa voltar na revisão
 -->
+
+### 2026-11-25 · M05 · Testes no Spring
+
+- **Status:** concluída
+- **Aprendi:** três níveis de teste: unitário do service (Mockito, sem Spring), slice do controller (`@WebMvcTest`, service
+  simulado) e integração (`@SpringBootTest` + Testcontainers, Postgres real). O teste com banco real pegou o que os mocks
+  não pegariam: o `timestamptz` guarda microssegundos, e o Java gera nanossegundos. Cada classe de teste monta o próprio
+  contexto, por isso o `@Import` em cada uma; sem ele, o teste usa o banco do `.env`, e um `deleteAll()` apagaria os dados locais.
+- **Decisão:** depois da M05, migrar o domínio para um coach de CS2 com IA (missão M05b). É escopo, não vira ADR.
+- **Quiz do dia:** 4/4. Revisão (2026-11-14): 4/4 (#36, #1, #2, #3).
+- **Ponto fraco:** montar sozinho o primeiro teste; ler o último `Caused by` quando o contexto não sobe.
 
 ### 2026-11-11 · M04 · CRUD de agendamento em camadas (fechamento)
 
