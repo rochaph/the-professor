@@ -17,7 +17,7 @@ e consumo de memória pesam.
 
 ## Decisão
 
-Java 25 (LTS mais recente) + Spring Boot 4 em `bff`, `pets`, `appointments`, `inventory` e `payments`. Go em `notifications`.
+Java 25 (LTS mais recente) + Spring Boot 4 em `bff`, `teams`, `reviews`, `quota` e `payments`. Go em `notifications`.
 
 ## Consequências
 

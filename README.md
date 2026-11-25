@@ -1,7 +1,7 @@
-# vet-care-system
+# the-professor
 
-Laboratório de arquitetura distribuída: uma plataforma veterinária simplificada (agendamento de atendimentos e
-carteira de saúde do pet) construída para praticar, de ponta a ponta,
+Laboratório de arquitetura distribuída: um coach de CS2 com IA (o time registra a partida e recebe uma análise
+comparada com o próprio playbook) construído para praticar, de ponta a ponta,
 **microsserviços, Arquitetura Hexagonal, mensageria, Session, OAuth 2.0/OIDC, Kubernetes, serverless e AWS**.
 
 O domínio é propositalmente enxuto. O foco está em como os serviços se comunicam, falham, se recuperam,
@@ -9,13 +9,17 @@ autenticam usuários e são implantados.
 
 ## Domínio
 
-- O **tutor** cadastra seus pets e mantém a carteira de saúde: vacinas, peso, alergias.
-- O tutor **agenda um atendimento** (ex.: vacinação) com um **veterinário**, pagando um sinal.
-- O tutor **autoriza a clínica** a ler a carteira de saúde do pet, com escopo limitado e revogável.
-- A clínica controla o **estoque de vacinas e medicamentos** por lote e validade.
-- O sistema envia **lembretes** de vacina, vermífugo e retorno.
+- O **time** cadastra seus jogadores, mantém o **playbook** por mapa e registra as partidas (mapa, placar, economia, notas).
+- O time **pede a análise** de uma partida, que usa uma **vaga semanal** e um **crédito**.
+- O **coach** (IA) compara a partida com o playbook do mapa e devolve pontos fortes, erros recorrentes e o que treinar.
+- O time **autoriza um coach externo** a ler o playbook de mapas escolhidos, com escopo limitado e revogável.
+- O sistema **avisa no Discord** quando a análise fica pronta ou falha.
 
-Fora do escopo: internação, prontuário clínico completo, exames, telemedicina, nota fiscal e multi-clínica.
+A IA roda com um adapter falso por padrão; o real só é ligado com chave no `.env` e limite de gasto.
+Os créditos são simulados: não há pagamento de verdade.
+
+Fora do escopo: assistir a partidas ao vivo, ranking de jogadores e cobrança real. A leitura automática de demos é um
+extra opcional no Bloco 5.
 
 ## Arquitetura
 
@@ -30,14 +34,14 @@ Fora do escopo: internação, prontuário clínico completo, exames, telemedicin
         └──────┬─────────┬──────┘
           REST │         │ REST (access token)
         ┌──────▼──┐  ┌───▼──────────┐
-        │  pets   │  │ appointments │──► Postgres + Outbox
+        │  teams  │  │   reviews    │──► Postgres + Outbox
         └─────────┘  └───┬──────────┘
                          │ eventos (Kafka)
               ┌──────────┼───────────┐
-        ┌─────▼─────┐ ┌──▼────────┐  │   Saga: horário → dose em estoque → sinal
-        │ inventory │ │ payments  │  │
+        ┌─────▼─────┐ ┌──▼────────┐  │   Saga: vaga → crédito → análise (CoachPort)
+        │   quota   │ │ payments  │  │
         └───────────┘ └───────────┘  │
-                                     ▼  appointment.confirmed, vaccine.due
+                                     ▼  review.ready, review.failed
                            SQS (LocalStack → AWS)
                                      │
                           ┌──────────▼──────────┐
@@ -48,11 +52,11 @@ Fora do escopo: internação, prontuário clínico completo, exames, telemedicin
 | Serviço | Responsabilidade |
 |---|---|
 | `bff` | API Gateway (roteamento, rate limit, circuit breaker, token relay), sessão (cookie + Redis) e login OAuth 2.0/OIDC; único ponto de entrada do browser |
-| `pets` | Tutores, pets e carteira de saúde; consentimento de acesso para clínicas |
-| `appointments` | Agenda dos veterinários e ciclo de vida do atendimento; orquestra a Saga |
-| `inventory` | Vacinas e medicamentos por lote e validade; reserva de doses |
-| `payments` | Sinal do agendamento e reembolso |
-| `notifications` | Lembretes de vacina, vermífugo e retorno (Go) |
+| `teams` | Times, jogadores, partidas e playbook por mapa; consentimento de acesso para coaches externos |
+| `reviews` | Pedido e ciclo de vida da análise; chama a IA pelo `CoachPort` e orquestra a Saga |
+| `quota` | Vagas semanais de análise; reserva e liberação |
+| `payments` | Carteira de créditos simulada: débito e estorno |
+| `notifications` | Avisos no Discord (Go) |
 
 ## Stack
 
@@ -75,13 +79,13 @@ Fora do escopo: internação, prontuário clínico completo, exames, telemedicin
 | Conceito | Onde |
 |---|---|
 | Microsserviços | 6 serviços, banco por serviço, deploy independente |
-| Arquitetura Hexagonal | todos os serviços; `appointments` é a referência; `notifications` troca adaptadores (Lambda ↔ HTTP) |
-| Mensageria | Outbox, consumidor idempotente, retry + DLQ, Saga do agendamento com compensação |
+| Arquitetura Hexagonal | todos os serviços; `reviews` é a referência (IA falsa e real atrás do mesmo port); `notifications` troca adaptadores (Lambda ↔ HTTP) |
+| Mensageria | Outbox, consumidor idempotente, retry + DLQ, Saga da análise com compensação |
 | API Gateway | `bff` com Spring Cloud Gateway: roteamento, rate limit, circuit breaker, token relay |
 | Session | BFF com cookie de sessão e store no Redis |
-| OAuth 2.0 / OIDC | Authorization Code + PKCE, Client Credentials, Token Exchange, validação de JWT, consentimento do tutor por escopo |
+| OAuth 2.0 / OIDC | Authorization Code + PKCE, Client Credentials, Token Exchange, validação de JWT, consentimento do time por escopo |
 | Kubernetes | kind, Helm, Ingress, HPA, réplicas |
-| Serverless / AWS | Lambda de lembretes (agendada e via SQS) + DynamoDB, via Terraform |
+| Serverless / AWS | Lambda de avisos (via SQS) e de resumo semanal (agendada) + DynamoDB, via Terraform |
 
 ## Estrutura
 

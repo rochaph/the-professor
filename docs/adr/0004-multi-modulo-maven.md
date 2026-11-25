@@ -16,7 +16,7 @@ A regra vira convenção, e convenção se perde com o tempo. Violar uma frontei
   continua sugerindo a classe proibida no autocomplete.
 - **Multi-módulo em todos os serviços**: cada camada é um módulo com as próprias dependências, e um import proibido
   nem compila, porque a classe não está no classpath. Em troca, são mais POMs e mais cerimônia por serviço.
-- **Multi-módulo só no `appointments`** (serviço de referência): menos cerimônia, mas cria dois padrões de estrutura
+- **Multi-módulo só no `reviews`** (serviço de referência): menos cerimônia, mas cria dois padrões de estrutura
   no projeto, contra a padronização que motivou o [ADR 0003](0003-maven-como-ferramenta-de-build.md).
 
 ## Decisão

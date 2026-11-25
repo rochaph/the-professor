@@ -1,11 +1,13 @@
 # CLAUDE.md
 
-Plataforma veterinária simplificada (agendamento de atendimentos e carteira de saúde do pet) para praticar arquitetura distribuída. Arquitetura, stack e roteiro estão no [README](README.md);
+`the-professor`: coach de CS2 com IA (análise de partidas comparada com o playbook do time) para praticar arquitetura distribuída.
+Arquitetura, stack e roteiro estão no [README](README.md);
 decisões de arquitetura em [docs/adr](docs/adr).
 
 ## Estrutura
 
-- `services/<nome>/`: um diretório por microsserviço (`bff`, `pets`, `appointments`, `inventory`, `payments` em Java; `notifications` em Go)
+- `services/<nome>/`: um diretório por microsserviço (`bff`, `teams`, `reviews`, `quota`, `payments` em Java; `notifications` em Go).
+  Até o fim da missão M05b, o `reviews` ainda está em `services/appointments`, com os nomes antigos
 - `infra/`: docker-compose, Kubernetes (Helm/Argo CD) e Terraform
 - `docs/adr/`: Architecture Decision Records, numerados em sequência a partir de `template.md`
 - `docs/learning/`: anotações de estudo por conceito
@@ -16,7 +18,7 @@ decisões de arquitetura em [docs/adr](docs/adr).
   - As dependências apontam para dentro. `domain` não depende de framework (sem anotações Spring, JPA ou Jackson) nem de infraestrutura.
   - Frameworks e tecnologias aparecem apenas em `adapters` e na configuração.
   - As fronteiras são verificadas por testes de arquitetura (ArchUnit), que devem quebrar o build quando violadas.
-  - Exceção didática: no Bloco 1 o `appointments` começa em camadas, de propósito (missões M02–M06 do
+  - Exceção didática: no Bloco 1 o `reviews` (ex-`appointments`) começa em camadas, de propósito (missões M02–M06 do
     [plano diário](docs/learning/plano-diario.md)), e é refatorado para hexagonal e multi-módulo nas missões seguintes.
 - **Cada serviço é dono dos seus dados**: banco próprio; nenhum serviço acessa o banco de outro.
 - **Nada de código de domínio compartilhado entre serviços.** A integração acontece por contratos explícitos: APIs REST e eventos versionados.
@@ -44,6 +46,7 @@ decisões de arquitetura em [docs/adr](docs/adr).
 
 - Nunca versionar segredos. Configuração sensível vai em `.env` (ignorado); versionar apenas `.env.example`.
 - Tudo roda localmente por padrão (docker-compose, kind, LocalStack).
+- A IA usa um adapter falso por padrão e nos testes; o real só com chave no `.env` e limite de gasto.
 - Recursos na AWS real só via Terraform, no plano gratuito, e destruídos (`terraform destroy`) ao fim de cada laboratório.
   Não deixar ligados recursos cobrados por hora: EKS, NAT Gateway, Load Balancers, RDS, IPv4 público.
 

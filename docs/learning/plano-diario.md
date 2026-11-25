@@ -23,7 +23,7 @@ Uma missão por dia, de ~60 minutos, com começo, meio e fim. A rotina das 15h l
 | M03 · Postgres, JPA e Flyway | 1 | concluída |
 | M04 · CRUD de agendamento em camadas | 1 | concluída |
 | M05 · Testes no Spring | 1 | concluída |
-| M05b · Migrar o domínio para o coach de CS2 | 1 | pendente |
+| M05b · Migrar o domínio para o coach de CS2 | 1 | em andamento |
 | M06 · Regras de negócio e a dor | 1 | pendente |
 | M07 · Domínio puro | 1 | pendente |
 | M08 · Ports e caso de uso | 1 | pendente |
@@ -35,15 +35,15 @@ Uma missão por dia, de ~60 minutos, com começo, meio e fim. A rotina das 15h l
 
 Status possíveis: `pendente`, `em andamento`, `concluída`.
 
-## Bloco 1: Spring Boot e Arquitetura Hexagonal no `appointments`
+## Bloco 1: Spring Boot e Arquitetura Hexagonal no `reviews`
 
 Uma novidade por vez, sempre com código rodando. Primeiro o Spring Boot em camadas (M02–M06), até sentir a dor de
 regra de negócio espalhada. Depois a refatoração para hexagonal (M07–M10) e, por fim, para multi-módulo (M11),
 que é a estrutura final do [ADR 0004](../adr/0004-multi-modulo-maven.md). Os testes da M05 são a rede de segurança
 de toda a refatoração.
 
-O `appointments` é o serviço de referência. Os demais nascem nos blocos em que entram em cena:
-`inventory` e `payments` no Bloco 2, `pets` e `bff` no Bloco 3.
+O `reviews` é o serviço de referência (até a M05, ele se chamava `appointments`, do domínio veterinário).
+Os demais nascem nos blocos em que entram em cena: `quota` e `payments` no Bloco 2, `teams` e `bff` no Bloco 3.
 
 ### M01 · ADR do multi-módulo
 
@@ -105,22 +105,24 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 ### M05b · Migrar o domínio para o coach de CS2
 
 - **Por quê:** trabalhar num sistema que você usaria de verdade, e praticar refatoração com a rede de testes da M05.
-- **Primeiro passo (5 min):** fechar o nome do projeto e dos serviços
-  (proposta: `appointments` → `reviews`, `pets` → `teams`, `inventory` → `quota`).
+- **Nomes fechados:** projeto `the-professor`; `appointments` → `reviews`, `pets` → `teams`, `inventory` → `quota`.
+- **Primeiro passo (5 min):** rodar o `verify` (9 testes verdes) e renomear só `Appointment` → `Review` pela IDE.
 - **Pronto quando:**
-  - [ ] README, CLAUDE.md, este plano (M06 em diante) e nomes nos ADRs ajustados (o Claude faz)
-  - [ ] Código renomeado: `petId` → `teamId`, `veterinarianId` → `matchId`, `scheduledAt` → `playedAt`
-  - [ ] `V2` do Flyway renomeando o banco, sem editar a `V1`
+  - [x] README, CLAUDE.md, este plano (M06 em diante) e nomes nos ADRs ajustados (o Claude faz)
+  - [ ] Código renomeado: `petId` → `teamId`, `veterinarianId` → `matchId`, `scheduledAt` → `playedAt`,
+    `/appointments` → `/reviews`, pacote `com.theprofessor.reviews`, pasta `services/reviews`
+  - [ ] `V2` do Flyway renomeando a tabela e as colunas, sem editar a `V1`
   - [ ] `@Future` → `@PastOrPresent`, e os testes da M05 adaptados e verdes
+  - [ ] Nome novo no compose, no `code-reviewer`, no GitHub e na pasta local (a pasta por último, por causa da memória)
 - **Conceito de entrevista:** refatorar com rede de testes; migration imutável; renomear coluna sem parar o serviço
   (expand/contract).
-- **Versão mínima:** nomes fechados e docs ajustadas.
+- **Versão mínima:** `Review` renomeado e testes verdes.
 
 ### M06 · Regras de negócio e a dor
 
 - **Por quê:** sentir o problema que a Arquitetura Hexagonal resolve, antes de aprender a solução.
-- **Primeiro passo (5 min):** listar 3 regras (não agendar no passado; horário do veterinário já ocupado;
-  cancelar só atendimento agendado, com reembolso conforme a antecedência).
+- **Primeiro passo (5 min):** listar 3 regras (não analisar partida futura; partida que já tem análise em andamento;
+  cancelar só análise pendente, com estorno do crédito conforme o estado).
 - **Pronto quando:**
   - [ ] Regras implementadas onde parecer natural no código em camadas, com testes
   - [ ] Endpoint de cancelamento
@@ -131,22 +133,23 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 ### M07 · Domínio puro
 
 - **Por quê:** tirar as regras do service e da entidade JPA e colocá-las num modelo que não conhece framework.
-- **Primeiro passo (5 min):** desenhar a máquina de estados do atendimento
-  (agendado → check-in → em atendimento → finalizado; cancelado; faltou).
+- **Primeiro passo (5 min):** desenhar a máquina de estados da análise
+  (pendente → processando → pronta; falhou; cancelada).
 - **Pronto quando:**
-  - [ ] Pacote `domain` com `Appointment` (sem setters públicos nem anotações JPA), `AppointmentStatus` e `TimeSlot`
-  - [ ] Pet e veterinário referenciados só por ID (são de outros serviços)
+  - [ ] Pacote `domain` com `Review` (sem setters públicos nem anotações JPA), `ReviewStatus` e `MatchScore`
+    (value object que só aceita placar possível)
+  - [ ] Time e partida referenciados só por ID (são do `teams`)
   - [ ] Regras da M06 movidas para o agregado, com testes unitários sem Spring
 - **Conceito de entrevista:** agregado, value object, invariantes, referência entre agregados por ID.
-- **Versão mínima:** `TimeSlot` com testes.
+- **Versão mínima:** `MatchScore` com testes.
 
 ### M08 · Ports e caso de uso
 
 - **Por quê:** é aqui que ports de entrada e de saída deixam de ser teoria.
-- **Primeiro passo (5 min):** escrever só as assinaturas de `ScheduleAppointmentUseCase` e `AppointmentRepository`.
+- **Primeiro passo (5 min):** escrever só as assinaturas de `RequestReviewUseCase` e `ReviewRepository`.
 - **Pronto quando:**
   - [ ] Pacote `application` com o port de entrada e um comando, e o port de saída
-  - [ ] Caso de uso sem anotações Spring, recusando horário ocupado
+  - [ ] Caso de uso sem anotações Spring, recusando partida que já tem análise em andamento
   - [ ] Teste unitário do caso de uso com repositório em memória
 - **Conceito de entrevista:** ports in/out, inversão de dependência, comandos.
 - **Versão mínima:** ports declarados e compilando.
@@ -156,7 +159,7 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 - **Por quê:** ligar o núcleo ao mundo real sem que ele saiba disso.
 - **Primeiro passo (5 min):** listar as classes que vão para `adapters` (controller, entidade JPA, repositório).
 - **Pronto quando:**
-  - [ ] Entidade JPA separada do domínio, com mapper, num adapter que implementa `AppointmentRepository`
+  - [ ] Entidade JPA separada do domínio, com mapper, num adapter que implementa `ReviewRepository`
   - [ ] Controller chamando o port de entrada
   - [ ] Caso de uso registrado via `@Configuration` + `@Bean`
   - [ ] Testes da M05 verdes, com o mesmo comportamento de antes
@@ -178,8 +181,8 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 - **Por quê:** passar a proteção das fronteiras do teste para o compilador (ADR 0004).
 - **Primeiro passo (5 min):** desenhar os 4 módulos e as setas de dependência entre eles.
 - **Pronto quando:**
-  - [ ] POM parent/agregador com `appointments-domain`, `appointments-application`, `appointments-adapters` e `appointments-bootstrap`
-  - [ ] `appointments-domain` sem nenhuma dependência de framework
+  - [ ] POM parent/agregador com `reviews-domain`, `reviews-application`, `reviews-adapters` e `reviews-bootstrap`
+  - [ ] `reviews-domain` sem nenhuma dependência de framework
   - [ ] Os mesmos testes verdes; ArchUnit mantido só para regras dentro de cada módulo
 - **Conceito de entrevista:** reactor do Maven, parent vs. agregador, `dependencyManagement` vs. `dependencies`.
 - **Versão mínima:** `domain` extraído para módulo próprio e compilando.
@@ -198,7 +201,7 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 - **Por quê:** consolidar o bloco é o que transforma prática em resposta de entrevista.
 - **Primeiro passo (5 min):** reler a anotação da dor (M06) e os ADRs.
 - **Pronto quando:**
-  - [ ] `appointments` no docker-compose e seção "Como rodar" do README preenchida
+  - [ ] `reviews` no docker-compose e seção "Como rodar" do README preenchida
   - [ ] `docs/learning/arquitetura-hexagonal.md` no formato do README da pasta
   - [ ] Simulado de entrevista do bloco (10 perguntas), incluindo explicar cada ADR do bloco em 1 minuto
   - [ ] Item 1 do roteiro marcado no README
@@ -209,10 +212,11 @@ O `appointments` é o serviço de referência. Os demais nascem nos blocos em qu
 
 Detalhados em missões ao fim do bloco anterior.
 
-- **Bloco 2, Mensageria e consistência:** Kafka, Transactional Outbox, consumidor idempotente, retry/DLQ, Saga do
-  agendamento com compensação (`inventory` e `payments`)
+- **Bloco 2, Mensageria e consistência:** Kafka, Transactional Outbox, consumidor idempotente, retry/DLQ, Saga da
+  análise com compensação (`quota` e `payments`), com a IA falsa atrás do `CoachPort`
 - **Bloco 3, Session, OAuth 2.0/OIDC e API Gateway:** Keycloak, BFF com sessão no Redis, Authorization Code + PKCE,
-  resource servers, consentimento do tutor por escopo, Client Credentials, Token Exchange, logout; `bff` como API Gateway
-  com Spring Cloud Gateway: roteamento, rate limit, circuit breaker, token relay (`pets` e `bff`)
+  resource servers, consentimento do time por escopo, Client Credentials, Token Exchange, logout; `bff` como API Gateway
+  com Spring Cloud Gateway: roteamento, rate limit, circuit breaker, token relay (`teams` e `bff`)
 - **Bloco 4, Kubernetes:** kind, Helm, Argo CD, OpenTelemetry, HPA
-- **Bloco 5, Serverless e AWS:** lembretes de vacina com `notifications` em Go na Lambda, SQS, Terraform (LocalStack → AWS)
+- **Bloco 5, Serverless e AWS:** avisos no Discord com `notifications` em Go na Lambda, SQS, Terraform (LocalStack → AWS);
+  extra opcional: leitura de demos em Go
