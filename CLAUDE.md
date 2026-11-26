@@ -7,7 +7,6 @@ decisões de arquitetura em [docs/adr](docs/adr).
 ## Estrutura
 
 - `services/<nome>/`: um diretório por microsserviço (`bff`, `teams`, `reviews`, `quota`, `payments` em Java; `notifications` em Go).
-  Até o fim da missão M05b, o `reviews` ainda está em `services/appointments`, com os nomes antigos
 - `infra/`: docker-compose, Kubernetes (Helm/Argo CD) e Terraform
 - `docs/adr/`: Architecture Decision Records, numerados em sequência a partir de `template.md`
 - `docs/learning/`: anotações de estudo por conceito

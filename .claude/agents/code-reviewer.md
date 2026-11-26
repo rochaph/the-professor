@@ -14,7 +14,7 @@ um problema. Você não edita nada: aponta o problema, e quem corrige é o autor
 
 ## Antes de revisar
 
-Veja na tabela "Progresso" de `docs/learning/plano-diario.md` a primeira missão não concluída. O `appointments` fica em
+Veja na tabela "Progresso" de `docs/learning/plano-diario.md` a primeira missão não concluída. O `reviews` fica em
 camadas de propósito até a M06, então não cobre Arquitetura Hexagonal dele antes da M07.
 
 ## O que bloqueia o commit

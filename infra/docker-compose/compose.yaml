@@ -1,8 +1,8 @@
 name: the-professor
 services:
-  appointments-db:
+  reviews-db:
     image: postgres:18
-    container_name: appointments-db
+    container_name: reviews-db
     environment:
       POSTGRES_DB: ${POSTGRES_DB:?defina no .env}
       POSTGRES_USER: ${POSTGRES_USER:?defina no .env}
