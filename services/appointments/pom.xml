@@ -9,7 +9,7 @@
         <version>4.1.2</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.vetcare</groupId>
+    <groupId>com.theprofessor</groupId>
     <artifactId>appointments</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <properties>

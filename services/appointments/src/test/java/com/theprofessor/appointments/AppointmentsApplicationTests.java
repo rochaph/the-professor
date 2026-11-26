@@ -1,4 +1,4 @@
-package com.vetcare.appointments;
+package com.theprofessor.appointments;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

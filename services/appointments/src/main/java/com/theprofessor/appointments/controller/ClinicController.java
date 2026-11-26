@@ -1,10 +1,11 @@
-package com.vetcare.appointments.controller;
+package com.theprofessor.appointments.controller;
 
-import com.vetcare.appointments.config.ClinicProperties;
-import com.vetcare.appointments.service.ClinicInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.theprofessor.appointments.config.ClinicProperties;
+import com.theprofessor.appointments.service.ClinicInfoService;
 
 @RestController
 @RequestMapping("/clinic")

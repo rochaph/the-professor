@@ -1,10 +1,10 @@
-package com.vetcare.appointments.dto;
+package com.theprofessor.appointments.dto;
 
 import java.time.Instant;
 import java.util.UUID;
 
-import com.vetcare.appointments.entity.Appointment;
-import com.vetcare.appointments.entity.AppointmentStatus;
+import com.theprofessor.appointments.entity.Appointment;
+import com.theprofessor.appointments.entity.AppointmentStatus;
 
 public record AppointmentResponse(UUID id, UUID petId, UUID veterinarianId, Instant scheduledAt, AppointmentStatus status) {
 

@@ -1,4 +1,4 @@
-package com.vetcare.appointments;
+package com.theprofessor.appointments;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -15,8 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
-import com.vetcare.appointments.entity.Appointment;
-import com.vetcare.appointments.repository.AppointmentRepository;
+import com.theprofessor.appointments.entity.Appointment;
+import com.theprofessor.appointments.repository.AppointmentRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc

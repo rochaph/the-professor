@@ -1,4 +1,4 @@
-name: vet-care-system
+name: the-professor
 services:
   appointments-db:
     image: postgres:18

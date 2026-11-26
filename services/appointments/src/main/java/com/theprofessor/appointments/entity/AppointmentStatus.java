@@ -1,4 +1,4 @@
-package com.vetcare.appointments.entity;
+package com.theprofessor.appointments.entity;
 
 public enum AppointmentStatus {
     PENDING,

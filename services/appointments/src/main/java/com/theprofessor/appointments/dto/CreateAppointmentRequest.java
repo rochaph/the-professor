@@ -1,4 +1,4 @@
-package com.vetcare.appointments.dto;
+package com.theprofessor.appointments.dto;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

@@ -1,6 +1,6 @@
-package com.vetcare.appointments.service;
+package com.theprofessor.appointments.service;
 
-import com.vetcare.appointments.config.ClinicProperties;
+import com.theprofessor.appointments.config.ClinicProperties;
 import org.springframework.stereotype.Service;
 
 @Service

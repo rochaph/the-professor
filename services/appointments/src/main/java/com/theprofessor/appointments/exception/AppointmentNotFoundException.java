@@ -1,4 +1,4 @@
-package com.vetcare.appointments.exception;
+package com.theprofessor.appointments.exception;
 
 import java.util.UUID;
 

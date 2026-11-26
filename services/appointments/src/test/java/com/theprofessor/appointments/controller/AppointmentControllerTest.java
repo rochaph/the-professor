@@ -1,4 +1,4 @@
-package com.vetcare.appointments.controller;
+package com.theprofessor.appointments.controller;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -15,10 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
-import com.vetcare.appointments.dto.AppointmentResponse;
-import com.vetcare.appointments.entity.AppointmentStatus;
-import com.vetcare.appointments.exception.AppointmentNotFoundException;
-import com.vetcare.appointments.service.AppointmentService;
+import com.theprofessor.appointments.dto.AppointmentResponse;
+import com.theprofessor.appointments.entity.AppointmentStatus;
+import com.theprofessor.appointments.exception.AppointmentNotFoundException;
+import com.theprofessor.appointments.service.AppointmentService;
 
 @WebMvcTest(AppointmentController.class)
 public class AppointmentControllerTest {

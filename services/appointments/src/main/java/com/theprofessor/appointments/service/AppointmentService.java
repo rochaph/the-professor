@@ -1,15 +1,15 @@
-package com.vetcare.appointments.service;
+package com.theprofessor.appointments.service;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vetcare.appointments.dto.AppointmentResponse;
-import com.vetcare.appointments.dto.CreateAppointmentRequest;
-import com.vetcare.appointments.entity.Appointment;
-import com.vetcare.appointments.exception.AppointmentNotFoundException;
-import com.vetcare.appointments.repository.AppointmentRepository;
+import com.theprofessor.appointments.dto.AppointmentResponse;
+import com.theprofessor.appointments.dto.CreateAppointmentRequest;
+import com.theprofessor.appointments.entity.Appointment;
+import com.theprofessor.appointments.exception.AppointmentNotFoundException;
+import com.theprofessor.appointments.repository.AppointmentRepository;
 
 
 @Service

@@ -1,4 +1,4 @@
-package com.vetcare.appointments.controller;
+package com.theprofessor.appointments.controller;
 
 import java.net.URI;
 import java.util.UUID;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.vetcare.appointments.dto.AppointmentResponse;
-import com.vetcare.appointments.dto.CreateAppointmentRequest;
-import com.vetcare.appointments.service.AppointmentService;
+import com.theprofessor.appointments.dto.AppointmentResponse;
+import com.theprofessor.appointments.dto.CreateAppointmentRequest;
+import com.theprofessor.appointments.service.AppointmentService;
 
 import jakarta.validation.Valid;
 

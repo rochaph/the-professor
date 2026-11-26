@@ -1,4 +1,4 @@
-package com.vetcare.appointments.config;
+package com.theprofessor.appointments.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

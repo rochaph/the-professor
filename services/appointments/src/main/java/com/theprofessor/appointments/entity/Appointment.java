@@ -1,4 +1,4 @@
-package com.vetcare.appointments.entity;
+package com.theprofessor.appointments.entity;
 
 import java.time.Instant;
 import java.util.UUID;
