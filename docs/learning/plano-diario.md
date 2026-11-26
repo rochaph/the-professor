@@ -23,7 +23,7 @@ Uma missão por dia, de ~60 minutos, com começo, meio e fim. A rotina das 15h l
 | M03 · Postgres, JPA e Flyway | 1 | concluída |
 | M04 · CRUD de agendamento em camadas | 1 | concluída |
 | M05 · Testes no Spring | 1 | concluída |
-| M05b · Migrar o domínio para o coach de CS2 | 1 | em andamento |
+| M05b · Migrar o domínio para o coach de CS2 | 1 | concluída |
 | M06 · Regras de negócio e a dor | 1 | pendente |
 | M07 · Domínio puro | 1 | pendente |
 | M08 · Ports e caso de uso | 1 | pendente |
@@ -109,11 +109,11 @@ Os demais nascem nos blocos em que entram em cena: `quota` e `payments` no Bloco
 - **Primeiro passo (5 min):** rodar o `verify` (9 testes verdes) e renomear só `Appointment` → `Review` pela IDE.
 - **Pronto quando:**
   - [x] README, CLAUDE.md, este plano (M06 em diante) e nomes nos ADRs ajustados (o Claude faz)
-  - [ ] Código renomeado: `petId` → `teamId`, `veterinarianId` → `matchId`, `scheduledAt` → `playedAt`,
+  - [x] Código renomeado: `petId` → `teamId`, `veterinarianId` → `matchId`, `scheduledAt` → `playedAt`,
     `/appointments` → `/reviews`, pacote `com.theprofessor.reviews`, pasta `services/reviews`
-  - [ ] `V2` do Flyway renomeando a tabela e as colunas, sem editar a `V1`
-  - [ ] `@Future` → `@PastOrPresent`, e os testes da M05 adaptados e verdes
-  - [ ] Nome novo no compose, no `code-reviewer`, no GitHub e na pasta local (a pasta por último, por causa da memória)
+  - [x] `V2` do Flyway renomeando a tabela e as colunas, sem editar a `V1`
+  - [x] `@Future` → `@PastOrPresent`, e os testes da M05 adaptados e verdes
+  - [x] Nome novo no compose, no `code-reviewer`, no GitHub e na pasta local (a pasta por último, por causa da memória)
 - **Conceito de entrevista:** refatorar com rede de testes; migration imutável; renomear coluna sem parar o serviço
   (expand/contract).
 - **Versão mínima:** `Review` renomeado e testes verdes.

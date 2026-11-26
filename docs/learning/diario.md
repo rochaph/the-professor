@@ -16,8 +16,8 @@ Resultado: ✅ acertou · ⚠️ parcial · ❌ errou · — ainda não pergunta
 | 2 | Para que serve o Maven Wrapper? | 2026-10-14 | 2026-11-14 | ✅ |
 | 3 | Que problema a arquitetura em camadas tradicional causa no domínio? | 2026-10-15 | 2026-11-14 | ✅ |
 | 4 | O que é um port de entrada? E um de saída? | 2026-10-15 | 2026-11-07 | ✅ |
-| 5 | Por que o port de saída é declarado no centro, e não no adapter? | 2026-10-15 | 2026-10-28 | ✅ |
-| 6 | Qual princípio do SOLID sustenta a Arquitetura Hexagonal? | 2026-10-15 | 2026-10-28 | ✅ |
+| 5 | Por que o port de saída é declarado no centro, e não no adapter? | 2026-10-15 | 2026-11-26 | ✅ |
+| 6 | Qual princípio do SOLID sustenta a Arquitetura Hexagonal? | 2026-10-15 | 2026-11-26 | ✅ |
 | 7 | Quando a Arquitetura Hexagonal *não* vale a pena? | 2026-10-15 | 2026-10-28 | ✅ |
 | 8 | Módulo único + ArchUnit vs. multi-módulo: quando cada um detecta a violação? | 2026-10-15 | 2026-11-05 | ✅ |
 | 9 | Por que o multi-módulo não elimina o ArchUnit? | 2026-10-15 | 2026-11-05 | ✅ |
@@ -54,8 +54,12 @@ Resultado: ✅ acertou · ⚠️ parcial · ❌ errou · — ainda não pergunta
 | 40 | Por que testar contra Postgres real, e não H2? | 2026-11-25 | 2026-11-25 | ✅ |
 | 41 | O que o `@ServiceConnection` faz no container de teste? | 2026-11-25 | 2026-11-25 | ✅ |
 | 42 | Pela pirâmide de testes, onde fica a maior parte dos testes de regra de negócio? | 2026-11-25 | 2026-11-25 | ✅ |
-| 43 | Por que um `Instant` gravado em `timestamptz` pode voltar diferente do enviado? | 2026-11-25 | — | — |
-| 44 | Por que o `@TestConfiguration` precisa de `@Import` em cada classe de teste? | 2026-11-25 | — | — |
+| 43 | Por que um `Instant` gravado em `timestamptz` pode voltar diferente do enviado? | 2026-11-25 | 2026-11-26 | ✅ |
+| 44 | Por que o `@TestConfiguration` precisa de `@Import` em cada classe de teste? | 2026-11-25 | 2026-11-26 | ❌ |
+| 45 | Por que renomear a tabela numa nova migration, e não editando a `V1` já aplicada? | 2026-11-26 | 2026-11-26 | ✅ |
+| 46 | Como renomear uma coluna em produção, com rolling deploy, sem derrubar o serviço (expand/contract)? | 2026-11-26 | 2026-11-26 | ✅ |
+| 47 | Trocou `POSTGRES_DB` no `.env` e o banco novo não existe: por quê? | 2026-11-26 | 2026-11-26 | ❌ |
+| 48 | Por que renomear o campo da entidade e a migration no mesmo passo, com `ddl-auto: validate`? | 2026-11-26 | 2026-11-26 | ✅ |
 
 ## Registro
 
@@ -69,6 +73,17 @@ Uma entrada por sessão, da mais recente para a mais antiga.
 - **Quiz do dia:** acertos / total; perguntas novas entram no banco de revisão
 - **Ponto fraco:** o que precisa voltar na revisão
 -->
+
+### 2026-11-26 · M05b · Migrar o domínio para o coach de CS2
+
+- **Status:** concluída (o primeiro rename foi feito por mim pela IDE; o restante, o Claude fez a meu pedido)
+- **Aprendi:** refatorar com a rede de testes da M05: os testes conferem que só os nomes mudaram. A tabela foi renomeada
+  numa `V2` (`ALTER TABLE ... RENAME`), sem tocar na `V1`, porque o checksum dela está no histórico do Flyway. Em produção,
+  com rolling deploy, renomear coluna é expand/contract (criar a nova, gravar nas duas, copiar, ler da nova, remover a antiga).
+  Campo da entidade e migration mudam juntos, senão o `ddl-auto: validate` não deixa a aplicação subir. O `POSTGRES_DB`
+  só vale com o volume vazio, por isso o `docker compose down -v`. Entrou um teste novo: partida futura dá 400 (`@PastOrPresent`).
+- **Quiz do dia:** 3/4 (#47 ❌). Revisão: 3/4 (#44 ❌; #43, #5, #6 ✅).
+- **Ponto fraco:** quando a imagem do Postgres roda o init (#47); por que a `@TestConfiguration` precisa de `@Import` (#44).
 
 ### 2026-11-25 · M05 · Testes no Spring
 
@@ -85,7 +100,7 @@ Uma entrada por sessão, da mais recente para a mais antiga.
 
 - **Status:** concluída
 - **Aprendi:** Bean Validation com `@NotNull`/`@Future` no record e `@Valid` no controller. Problem Details (RFC 9457)
-  com um `@RestControllerAdvice` que estende `ResponseEntityExceptionHandler`: 404 para `AppointmentNotFoundException`
+  com um `@RestControllerAdvice` que estende `ResponseEntityExceptionHandler`: 404 para `ReviewNotFoundException`
   e 400 com uma lista `errors` (e não uma propriedade por campo, que colidiria com `status`/`type` e sobrescreveria
   erros). JSON malformado é recusado pelo Jackson antes da validação. O Git local corrompeu (objetos vazios após um
   desligamento do WSL) e foi restaurado a partir do GitHub.
@@ -98,7 +113,7 @@ Uma entrada por sessão, da mais recente para a mais antiga.
 - **Aprendi:** contrato antes do código: UUID, camelCase, data ISO-8601 com fuso e `201` com `Location` e corpo.
   DTOs em `record` separados da entidade, com `AppointmentResponse.from(...)`. A entidade nasce `PENDING` por um
   construtor próprio, mas o JPA ainda precisa do construtor sem argumentos para ler do banco. `@Transactional(readOnly = true)`
-  no GET e uma `AppointmentNotFoundException` própria, para o service não saber de HTTP. Bean Validation foi apresentada,
+  no GET e uma `ReviewNotFoundException` própria, para o service não saber de HTTP. Bean Validation foi apresentada,
   mas não implementada.
 - **Quiz do dia:** 2/4 (#31 ❌, #33 ❌). Revisão: 4/4.
 - **Ponto fraco:** por que DTO e não entidade no `@RequestBody` (#31); `@Valid` dispara a validação (#33).
@@ -181,7 +196,7 @@ Uma entrada por sessão, da mais recente para a mais antiga.
   Decisão: multi-módulo em todos os serviços (vira ADR 0004 na M01).
 - **Quiz do dia:** não aplicado. Ficaram em aberto 2 perguntas de checagem:
   1. No caso de uso "agendar atendimento", quais seriam os ports (in e out), e em qual módulo mora cada interface e cada implementação?
-  2. Por que o `AppointmentRepository` é declarado no `application`, e não no módulo de adapters?
+  2. Por que o `ReviewRepository` é declarado no `application`, e não no módulo de adapters?
 - **Ponto fraco:** ainda não avaliado.
 
 ### 2026-10-14 · Ferramenta de build
