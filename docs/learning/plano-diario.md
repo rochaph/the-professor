@@ -213,10 +213,12 @@ Os demais nascem nos blocos em que entram em cena: `quota` e `payments` no Bloco
 Detalhados em missões ao fim do bloco anterior.
 
 - **Bloco 2, Mensageria e consistência:** Kafka, Transactional Outbox, consumidor idempotente, retry/DLQ, Saga da
-  análise com compensação (`quota` e `payments`), com a IA falsa atrás do `CoachPort`
+  análise com compensação (`quota` e `payments`), com a IA falsa atrás do `CoachPort`; ADR curto do estilo de
+  comunicação entre serviços (REST síncrono + eventos, gRPC fora por ora), escrito pelo Claude
 - **Bloco 3, Session, OAuth 2.0/OIDC e API Gateway:** Keycloak, BFF com sessão no Redis, Authorization Code + PKCE,
   resource servers, consentimento do time por escopo, Client Credentials, Token Exchange, logout; `bff` como API Gateway
   com Spring Cloud Gateway: roteamento, rate limit, circuit breaker, token relay (`teams` e `bff`)
+  extra opcional depois do bloco: uma chamada interna em gRPC (`reviews` → `teams`, playbook do mapa) comparada com REST
 - **Bloco 4, Kubernetes:** kind, Helm, Argo CD, OpenTelemetry, HPA
 - **Bloco 5, Serverless e AWS:** avisos no Discord com `notifications` em Go na Lambda, SQS, Terraform (LocalStack → AWS);
   extra opcional: leitura de demos em Go
